@@ -19,7 +19,7 @@ void BinaryHeap<Comparable>::deleteMin() {
 }
 
 template <typename Comparable>
-void BinaryHeap<Comparable>::percolateDown(int hole) {
+template void BinaryHeap<Comparable>::percolateDown(int hole) {
   int child;
   Comparable tmp = array[hole];
 
