@@ -18,22 +18,22 @@ function createLinkList(list){
  * @return {ListNode}
  */
 var addTwoNumbers = function(l1, l2) {
-  let restNode = l2;
-  while(l1) {
-    const val = l1.val + restNode.val;
-    restNode.val = val % 10;
-    const addToNext = (val - restNode.val) / 10;
-    console.log(restNode.next, addToNext)
-    if (restNode.next) {
-      restNode = restNode.next;
-      restNode.val = restNode.val + addToNext;
-    } else {
-      restNode.next = l1.next;
-      return l2;
-    }
-    l1 = l1.next;
+  let r = new ListNode(0);
+  let ptr = r;
+  while(l1 || l2) {
+    const val1 = l1 ? l1.val : 0;
+    const val2 = l2 ? l2.val : 0;
+
+    const val = val1 + val2 + ptr.val;
+    ptr.val = val % 10;
+    const addToNext = Math.floor(val / 10);
+    ptr.next = new ListNode(addToNext);
+
+    if (l1) l1 = l1.next;
+    if (l2) l2 = l2.next;
+    ptr = ptr.next;
   }
-  return l2;
+  return r;
 };
 
 console.log(addTwoNumbers(createLinkList([9,8]),createLinkList([1])));
