@@ -73,6 +73,7 @@ var Y = function(f) {
     }
   }
   // 自己调用自己
+  // fact(fact)
   return g(g)
 }
 // 使用 Y 组合子，匿名函数 f 递归
@@ -88,4 +89,6 @@ var fact5 = Y(function(q) {
     }
   }
 })
+// console.log(fab4(fab4)(4))
+// Y(f) = fab4(fab4)
 console.log(fact5(4))
