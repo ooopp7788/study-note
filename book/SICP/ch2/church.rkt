@@ -40,7 +40,6 @@
 ;; 斐波那契数列
 ;; fab(0) = 1
 ;; fab(n) = n * fab(n-1)
-;; lambda n . IsZero n 1 (Mult n ( something (Pred n)))
 ;; let fact = lambda n . IsZero n 1 (Mult n (fact (Pred n))) 
 
 
