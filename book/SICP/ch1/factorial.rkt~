@@ -1,9 +1,0 @@
-#lang sicp
-(define (factorial n)
-  (define (fact-iter product counter n)
-    (if (> counter n)
-        product
-        (fact-iter (* product counter) (+ counter 1) n)))
-  (fact-iter 1 1 n))
-
-(factorial 5)
