@@ -15,14 +15,16 @@
 
 
 ;; 门电路
-(define (or-gate a1 a2 result)
+(define (or-gate in1 in2 out)
   ())
 
-(define (and-gate a1 a2 result)
+(define (and-gate in1 in2 out)
   ())
 
-(define (inverter a1 result)
-  ())
+(define (inverter in out)
+  (define (inverter-input)
+    (let ((new-value (logic-not (get-signal input))))
+      (after-delay inverter-input new-value))))
 
 (define a (make-wire))
 (define b (make-wire))
