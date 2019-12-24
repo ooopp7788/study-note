@@ -39,27 +39,66 @@
            (procedure-environment procedure))))
         (else
          (error "Unknown procedure type -- APPLY" procedure))))
-;; exps 顺序求值
+;; 过程参数 顺序求值
 (define (list-of-values exps env)
   (if (no-operands? exps)
       '()
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
+;; if 表达式: (if preficate consequent alternative)
+;; 先求值条件表达式
+(define (eval-if exp env)
+  (if (true? (eval (if-predicate exp) env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))
+;; 赋值: (set! variable value)
+;; 赋值和定义: 先求值,将改变 env 留给下级处理
+(define (eval-assignment exp env)
+  (set-variable-value! (eval (assignment-variable exp) env)
+                       (eval (assignment-value exp) env)
+                       env)
+  'ok)
+;; 定义: (define variable value)
+(define (eval-definition exp env)
+  (define-variable! (eval (definition-variable exp) env)
+                       (eval (definition-value exp) env)
+                       env)
+  'ok)
+;; 1. begin: (begin exp1 exp2 ...)
+;; 2. labmbda
+;; 3. cond 执行的 exp
+;; 顺序执行,返回最后一个表达式的值
+(define (eval-sequence exps env)
+  (cond
+    ;; 最后一个 exp 返回执行值
+    ((last-exps? exps) (eval (first-exps exps) env))
+    ;; 其他前面的 exp 仅执行,舍弃返回值
+    (else (eval (first-exps exps))
+          (eval-sequence exps env))))
+
 
 ;; 各种表达式类型判断
+;; 数字、字符串
 (define (self-evaluating? exp)
   (cond ((number? exp) true)
         ((string? exp) true)
         (else false)))
+;; 变量用 symbol 表示
 (define (variable? exp) (symbol? exp))
+;; 通用判断过程：判断 exp pair 的 car元素等于 tag
 (define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
       false))
+;; 引号: 'quote symbol 表示
 (define (quoted? exp) (tagged-list? exp 'quote))
+;; 引号后的第一个值: cadr
 (define (text-of-quotation exp) (cadr exp))
+;; 复值: 'set! symbol 表示
 (define (assignment? exp) (tagged-list? exp 'set!))
+;; 变量: 'set! 后第一个参数, 即exp的第二个参数
 (define (assignment-variable exp) (cadr exp))
+;; 值: 即exp的第三个参数
 (define (assignment-value exp) (caddr exp))
 ;; 2种定义表达式
 ;; 1、(define <var> <value>) 和
@@ -106,18 +145,6 @@
         ((last-exp? seq) (first-exp seq))
         (else (make-begin seq))))
 (define (make-begin seq) (cons 'begin seq))
-;; 其他
-(define (application? exp) (pair? exp))
-;; 操作符
-(define (operator exp) (car exp))
-;; 操作数
-(define (operands exp) (cdr exp))
-;; 空
-(define (no-operands? ops) (null? ops))
-;; 第一个操作
-(define (first-operand ops) (car ops))
-;; rest操作
-(define (rest-operands ops) (cdr ops))
 ;; cond: 使用嵌套 if 实现
 (define (cond? exp) (tagged-list? exp 'cond))
 (define (cond-clauses exp) (cdr exp))
@@ -138,32 +165,77 @@
             (make-if (cond-predicate first)
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
+;; 其他
+(define (application? exp) (pair? exp))
+;; 操作符
+(define (operator exp) (car exp))
+;; 操作数
+(define (operands exp) (cdr exp))
+;; 空
+(define (no-operands? ops) (null? ops))
+;; 第一个操作
+(define (first-operand ops) (car ops))
+;; rest操作
+(define (rest-operands ops) (cdr ops))
+;; 布尔
+(define (true? x) (not (eq? x false)))
+(define (false? x) (eq? x false))
+;; 过程构造
+(define (make-procedure parameters body env)
+  (list 'procedure parameters body env))
+;; 复合过程判断
+(define (compound-procedure? p) (tagged-list? p 'procedure))
+;; 参数: 第二个
+(define (procedure-parameters p) (cadr p))
+;; body: 第三个
+(define (procedure-body p) (caddr p))
+;; env: 第四个
+(define (procedure-environment p) (cadddr p))
 
-
-;; if 表达式
-;; 先求值条件表达式
-(define (eval-if exp env)
-  (if (true? (eval (if-predicate exp) env))
-      (eval (if-consequent exp) env)
-      (eval (if-alternative exp) env)))
-;; 赋值和定义: 先求值，将改变 env 留给下级处理
-;; 赋值
-(define (eval-assignment exp env)
-  (set-variable-value! (eval (assignment-variable exp) env)
-                       (eval (assignment-value exp) env)
-                       env)
-  'ok)
-;; 定义
-(define (eval-definition exp env)
-  (define-variable! (eval (definition-variable exp) env)
-                       (eval (definition-value exp) env)
-                       env)
-  'ok)
-;; begin
-(define (eval-sequence exps env)
-  (cond
-    ;; 最后一个 exp 返回执行值
-    ((last-exps? exps) (eval (first-exps exps) env))
-    ;; 其他前面的 exp 仅执行，舍弃返回值
-    (else (eval (first-exps exps))
-          (eval-sequence exps env))))
+;; frame: 由 var val 序对组成的表 (list (list var1 var2 var3...) (list val1 val2 val3...))
+(define (make-frame variables values) (cons variables values))
+(define (frame-variables frame) (car frame))
+(define (frame-values frame) (cdr frame))
+;; frame 头部添加(cons var val)
+(define (add-binding-to-frame! var val frame)
+  (set-car! frame (cons var (car frame)))
+  (set-cdr! frame (cons val (cdr frame))))
+;; 获取第一个env
+(define (first-frame env) (car env))
+;; 获取剩下的env
+(define (enclosing-environment env) (cdr env))
+(define the-empty-environment '())
+;; env 扩充: env 头部添加一个 frame
+;; env 是由frame 为元素组成的表 (list frame1 frame2)
+(define (extend-environment vars vals base-env)
+  (if (= (length vars) (length vals))
+      ;; 头部添加一个 frame
+      (cons (make-frame vars vals) base-env)
+      ;; 错误处理
+      (if (< (length vars) (length vals))
+          (error "Too many arguments supplied" vars vals)
+          (error "Too few arguments supplied" vars vals))))
+;; 环境查询值
+(define (lookup-variable-value var env0)
+  ;; 递归查询 env
+  (define (env-loop env)
+    ;; 在 vars 表中找到参数, 返回对应的 vals 表中的值
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop (enclosing-environment env)))
+            ((eq? var (car vars)) (car vals))
+            (else (scan (cdr vars) (cdr vals)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame) (frame-values frame)))))
+  (env-loop env0))
+;; 环境变量赋值
+(define (define-variable! var val env)
+  (let ((frame (first-frame env)))
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (add-binding-to-frame! var val frame))
+            ((eq? var (car vars)) (set-car! vals val))
+            (else (scan (cdr vars) (cdr vals)))))
+    (scan (frame-variables frame) (frame-values frame))))
