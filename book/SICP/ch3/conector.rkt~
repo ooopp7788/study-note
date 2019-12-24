@@ -16,16 +16,13 @@
 (define (has-value? c)
   ())
 
-(define (get-value c)
+(define (get-value c new)
   ())
 
 (define (set-value! c value informant)
   ())
 
 (define (forgot-value! c retractor)
-  ())
-
-(define (get-value c new)
   ())
 
 (define (adder a1 a2 sum)
