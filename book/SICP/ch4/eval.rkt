@@ -1,4 +1,5 @@
 #lang sicp
+;; 表达式求值
 (define (eval exp env)
   (cond
     ;; 自求值表达式: 值
@@ -22,6 +23,28 @@
     ;; 过程应用
     ((application? exp) (apply (eval (operator exp) env) (list-of-values (operands exp) env)))
     (else (error "Unknown expression type -- EVAL" exp))))
+;; apply 过程应用
+(define (apply procedure arguments)
+  (cond ((primitive-procedure? procedure)
+         ;; 基本过程，直接调用
+         (apply-primitive-procedure procedure arguments))
+        ;; 复合过程，建立新环境，在新环境求值
+        ((compound-procedure? procedure)
+         (eval-sequence
+          (procedure-body procedure)
+          (extend-environment
+           ;; 新环境，包括 复合过程参数、当前参数、复合过程环境
+           (procedure-parameters procedure)
+           arguments
+           (procedure-environment procedure))))
+        (else
+         (error "Unknown procedure type -- APPLY" procedure))))
+;; exps 顺序求值
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (eval (first-operand exps) env)
+            (list-of-values (rest-operands exps) env))))
 
 ;; 各种表达式类型判断
 (define (self-evaluating? exp)
@@ -85,10 +108,15 @@
 (define (make-begin seq) (cons 'begin seq))
 ;; 其他
 (define (application? exp) (pair? exp))
+;; 操作符
 (define (operator exp) (car exp))
+;; 操作数
 (define (operands exp) (cdr exp))
+;; 空
 (define (no-operands? ops) (null? ops))
+;; 第一个操作
 (define (first-operand ops) (car ops))
+;; rest操作
 (define (rest-operands ops) (cdr ops))
 ;; cond: 使用嵌套 if 实现
 (define (cond? exp) (tagged-list? exp 'cond))
