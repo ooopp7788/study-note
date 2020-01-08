@@ -9,11 +9,12 @@ function coinChange(coins, n) {
   let i = 1
   while (i <= n) {
       for (coin of coins) {
-          if (i - coin >= 0) {
-              if (arr[i] !== -1) {
+          if (i - coin >= 0 && arr[i - coin] >= 0) {
+              if (arr[i] < 0) {
+                arr[i] = arr[i - coin] + 1
+              } else {
                 arr[i] = Math.min(1 + arr[i - coin], arr[i])
               }
-              arr[i] = 1 + arr[i - coin]
           }
       }
       i++
@@ -21,4 +22,4 @@ function coinChange(coins, n) {
   return arr[n]
 }
 
-console.log(coinChange([2], 3))
+console.log(coinChange([2],3))
