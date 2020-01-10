@@ -9,7 +9,7 @@ function coinChange(coins, n) {
   let i = 1
   while (i <= n) {
     for (coin of coins) {
-      if (i - coin >= 0 && arr[i - coin] >= 0) {
+      if (i >= coin && arr[i - coin] >= 0) {
         if (arr[i] < 0) {
           arr[i] = arr[i - coin] + 1
         } else {

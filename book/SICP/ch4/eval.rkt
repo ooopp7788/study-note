@@ -23,6 +23,7 @@
     ;; 过程应用
     ((application? exp) (apply (eval (operator exp) env) (list-of-values (operands exp) env)))
     (else (error "Unknown expression type -- EVAL" exp))))
+
 ;; apply 过程应用
 (define (apply procedure arguments)
   (cond ((primitive-procedure? procedure)
@@ -200,9 +201,9 @@
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))
-;; 获取第一个env
+;; 获取 env 中第一个 frame
 (define (first-frame env) (car env))
-;; 获取剩下的env
+;; 获取剩下的 env
 (define (enclosing-environment env) (cdr env))
 (define the-empty-environment '())
 ;; env 扩充: env 头部添加一个 frame
