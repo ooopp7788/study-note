@@ -28,14 +28,14 @@
 ; ((length2 length2) '(a b c))
 
 ;; (lambda (q) (...)) 抽象 为 f
-(define length3
+(define Y
   (lambda (f)
-    (lambda (g)
+    ((lambda (h) (h h))
+     (lambda (g)
        (lambda (x)
-         ((f (g g)) x))
-       ))
-  )
-((length3 (lambda (q)
+         ((f (g g)) x))))
+    ))
+((Y (lambda (q)
              (lambda (l)
                (cond ((null? l) 0)
                      (else (+ 1 (q (cdr l)))))))) '(1 2 3 4))
