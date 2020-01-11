@@ -66,15 +66,17 @@ var fact4 = function(h) {
 // v5
 // Y 组合子
 var Y = function(f) {
-  var g = function(h) {
+  return (function(g) {
+    return g(g)
+  })(function(h) {
     return function (x) {
       // 递归在参数中完成
       return f(h(h))(x)
     }
-  }
+  })
   // 自己调用自己
   // fact(fact)
-  return g(g)
+  // return g(g)
 }
 // 使用 Y 组合子，匿名函数 f 递归
 var fact5 = Y(function(q) {
