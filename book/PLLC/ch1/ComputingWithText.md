@@ -1,9 +1,11 @@
 ### 定义集合
 
 #### 1.1 一个BNF
+```BNF
 B = t
   | f
   | (B•B)
+```
 
 集合B是由递归定义的，所以B中的元素是无限的
 
@@ -64,8 +66,8 @@ B2 -> B2' => (B1 • B2) -> (B1 • B2')
 
 #### 1.6 求值 Function
 `eval` relation
-eval(B) = f  if B = f
-        = t  if B = t
+eval(B) = f  if B =r f
+        = t  if B =r t
 现在用了另一种形式表示relation，这种方式说明它是一个Function，
 这种关系表示遍历每个元素，映射到另一个元素
 我们用Function这种表示是因为: 如果 `eval` 作为一个可被理解的求值器，必须是一个函数
