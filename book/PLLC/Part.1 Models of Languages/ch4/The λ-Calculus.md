@@ -72,6 +72,9 @@ iszero =. λn.n (λx.false) true
 
 #### 4.6 Recusion
 不动点 和 Y 组合子
+```
+Y =. λf.(λx.f (x x)) (λx.f (x x))
+```
 
 #### 4.7 λ-Calculus
 表达式完全规约，指一个表达式子无法被 ->β 规约 和 ->η 规约，也叫一个表达式是`标准型 normal form`
