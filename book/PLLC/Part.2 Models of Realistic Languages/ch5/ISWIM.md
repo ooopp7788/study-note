@@ -37,7 +37,7 @@ b   =  { ⌈n⌉ | n ∈ Z }
 o^1 =  { add1,sub1,iszero }
 o^2 =  { +, -, *, }
 
-(if0 K M N) =. (((iszero K) (λX.M) (λX.N)) ⌈0⌉) where X ̸∈ FV(M) ∪ FV(N)
+(if0 K M N) ≐ (((iszero K) (λX.M) (λX.N)) ⌈0⌉) where X ̸∈ FV(M) ∪ FV(N)
 
 #### 5.2 ISWIM Reductions
 ISWIM 中的函数，仅接受完全求值后的参数，所以我们需要定义 values 集合
@@ -78,7 +78,7 @@ v = βv U δ
 
 #### Yv 组合子
 SIWIM 中的 Y 和 LC 中的 Y 组合子一样，但是事实上 Y 组合子并没有很大用处
-Y =. λf.(λx.f (x x)) (λx.f (x x))
+Y ≐ λf.(λx.f (x x)) (λx.f (x x))
 Y f  =    (λf.(λx.f (x x)) (λx.f (x x))) f
      ->v  (λx.f (x x)) (λx.f (x x))
      ->v  f ((λx.f (x x) (λx.f (x x))
@@ -139,4 +139,4 @@ evalv(M) = b         if M =v b
          = function  if M =v λX.N
 ```
 如果 evalv(M) 不存在，我们说 M 是发散的。
-比如: Ω =. ((λx.x x) (λx.x x))
+比如: Ω ≐ ((λx.x x) (λx.x x))

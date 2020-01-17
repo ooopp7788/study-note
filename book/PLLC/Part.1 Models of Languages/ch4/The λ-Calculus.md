@@ -34,9 +34,9 @@ lambda 表达式 3 个基本关系
 
 #### 4.3 布尔值编码
 ```
-true =. λx.λy.x
-false =. λx.λy.y
-if =. λv.λt.λf.v t f
+true ≐ λx.λy.x
+false ≐ λx.λy.y
+if ≐ λv.λt.λf.v t f
 ```
 if true M N =   (λv.λt.λf.v t f) (λx.λy.x) M N
             ->β (λt.λf.(λx.λy.x) t f) M N
@@ -47,10 +47,10 @@ if true M N =   (λv.λt.λf.v t f) (λx.λy.x) M N
 
 #### 4.4 Pairs
 ```
-⟨M,N⟩  =.   λs.sMN
-mkpair =.   λx.λy.λs.s x y
-fst    =.   λp.p true
-snd    =.   λp.p false
+⟨M,N⟩  ≐   λs.sMN
+mkpair ≐   λx.λy.λs.s x y
+fst    ≐   λp.p true
+snd    ≐   λp.p false
 fst (mkpair M N)  =n  N
 snd (mkpair M N)  =n  M
 ```
@@ -58,22 +58,25 @@ snd (mkpair M N)  =n  M
 #### 4.5 Number
 将 f 应用在 x 上的次数
 ```
-0 =. λf.λx.x
-1 =. λf.λx.f x
-2 =. λf.λx.f (f x)
+0 ≐ λf.λx.x
+1 ≐ λf.λx.f x
+2 ≐ λf.λx.f (f x)
 ...
 // add1
-add1 =. λn.λf.λx.f (n f x)
+add1 ≐ λn.λf.λx.f (n f x)
 // add
-add =. λn.λm.m add1 n
+add ≐ λn.λm.m add1 n
 // iszore
-iszero =. λn.n (λx.false) true
+iszero ≐ λn.n (λx.false) true
 ```
 
 #### 4.6 Recusion
-不动点 和 Y 组合子
+
+##### mult
+
+##### 不动点 和 Y 组合子
 ```
-Y =. λf.(λx.f (x x)) (λx.f (x x))
+Y ≐ λf.(λx.f (x x)) (λx.f (x x))
 ```
 
 #### 4.7 λ-Calculus
@@ -91,7 +94,7 @@ Y =. λf.(λx.f (x x)) (λx.f (x x))
 注*: 钻石性质 对 ->n 是无效的，因为 β规约 和 η规约 可能将表达式变得更加复杂，使得单次规约无法得到相等表达式
 
 ##### 并非所有表达式都可以转化为`标准型`表达式
-如: Ω =. ((λx.x x) (λx.x x))
+如: Ω ≐ ((λx.x x) (λx.x x))
 这种无法终止的规约的问题是: 我们对一个函数的参数求值，而这个参数不会被函数体所使用
 这个暗示了一个策略: 我们应该应用表达式最左边的 β 或 η规约，以获得`标准型`表达式
 定义`->n̄`: 表示标准顺序规约，如果存在`标准型`表达式，这个关系符保证一定能找到`标准型`表达式
