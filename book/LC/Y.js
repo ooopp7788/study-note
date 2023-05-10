@@ -77,6 +77,17 @@ var Y = function(f) {
     }
   })
 }
+
+Y = f => (x => f(x(x)))(x => f(x(x)));
+// Y(f) = f((x => f(x(x))))((x => f(x(x))))
+// Y(f) = f(Y(f))
+Y = function(f) {
+    return (function(x) {
+        return f(x(x));
+    })(function(x) {
+        return f(x(x));
+    })
+}
 // 使用 Y 组合子，匿名函数 f 递归
 var fact5 = Y(function(q) {
   return function(x) {
