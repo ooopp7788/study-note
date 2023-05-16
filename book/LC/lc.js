@@ -63,19 +63,20 @@ console.log(toNumber(DECREMENT(TWO)));
 console.log(toNumber(SUBTRACT(THREE)(ONE)));
 console.log(toBoolean(IS_LESS_OR_EQUAL(ONE)(THREE)));
 
-// 迭代：Y 组合子
-var Y = function(f) {
-    // 自己调用自己
-    // fact(fact)
-    return (function(g) {
-        return g(g)
-    })(function(h) {
-        return function (x) {
-            // 递归在参数中完成
-            return f(h(h))(x)
-        }
-    })
+Y = function(f) {
+  // 自己调用自己
+  // fact(fact)
+  return (function(g) {
+    return g(g)
+  })(function(h) {
+    return function (x) {
+      // 递归在参数中完成
+      return f(h(h))(x)
+    }
+  })
 }
+// 迭代：Y 组合子
+Y = f => (h => x => f(h(h))(x))(h => x => f(h(h))(x));
 
 // LIST PAIR  实现
 console.log('====== list ======');
@@ -102,9 +103,13 @@ const toArray = l => {
     return [FIRST(l), ...toArray(REST(l))];
 }
 console.log(toArray(my_list).map(i => toNumber(i)))
-const FACT = Y(
-    f => n => IF(IS_ZERO(n))(ONE)(x => MULTIPLY(n)(f(DECREMENT(n)))(x));
-);
+
+const FACT = Y(f => n => IF(IS_ZERO(n))(ONE)(x => MULTIPLY(n)(f(DECREMENT(n)))(x)));
 console.log(toNumber(FACT(FOUR)));
 
 
+const FACT1 = (f => (h => x => f(h(h))(x))(h => x => f(h(h))(x)))(
+    f => n => (a => x => y => a(x)(y))((n => n(x => (x => y => y))(x => y => x))(n))(f => x => f(x))(x => (n => m => n((n => m => n(n => f => x => f(n(f)(x)))(m))(m))(f => x => x))(n)(f((n => (p => p(x => y => x))(n(p => (x => y => f => f(x)(y))((p => p(x => y => y))(p))((n => f => x => f(n(f)(x)))((p => p(x => y => y))(p))))((x => y => f => f(x)(y))(f => x => x)(f => x => x))))(n)))(x))
+)
+
+console.log('FACT1:', toNumber(FACT1(FOUR)));

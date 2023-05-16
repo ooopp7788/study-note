@@ -103,4 +103,4 @@ var fact5 = Y(function(q) {
 })
 // console.log(fab4(fab4)(4))
 // Y(f) = fab4(fab4)
-console.log(fact5(4))
+// console.log(fact5(4))
