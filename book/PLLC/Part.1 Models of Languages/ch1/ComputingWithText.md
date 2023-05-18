@@ -18,24 +18,34 @@ B = t
 一个relation 表示一个集合，其中元素都由对(pair)组成
 a ≡ a: `≡` 表示 reflexive, symmetric, transitive 三种关系，也称作`等价关系`
 例子:
-1. 反射关系-reflexive: a R a
+1. 反射关系-reflexive: a R a (for any a)
 2. 对称关系-symmetric: a R b => b R a
 3. 传递关系-transitive: a R b and b R c => a R c
 
 如果一个 relation 是: 反射的 and 对称的 and 传递的，那么这个关系是`等价关系`(equivalence)
-例子:
-(f • B1) ≈r B1
-(t • B1) ≈r t
-B1 ≈r B1
 
-B1 ≈r B2 => B2 ≈r B1
-B1 ≈r B2 and B2 ≈r B3 => B1 ≈r B3
+例子:
+非反射、非对称 且 非传递的 relation r 满足：
+    (f • B1) r B1
+    (t • B1) r t
+定义 relation ≍r, 是 relation r 的反射版本, 得
+    (f • B1) ≍r B1
+    (t • B1) ≍r t
+    B1 ≍r B1
+
+定义 relation ≈r, 是 relation ≍r 的 对称-传递 版本, 得
+    (f • B1) ≈r B1
+    (t • B1) ≈r t
+    B1 ≈r B1
+    B1 ≈r B2 => B2 ≈r B1
+    B1 ≈r B2 and B2 ≈r B3 => B1 ≈r B3
 
 #### 1.3 将 relations 看做求值
 上述例子是一个 t: ture f: false, • 类似 or 操作， ≈r 代表两端表达式等价
 由上面等价关系可推出:(f • t) ≈r (t • t)
 但 • 并非和 or 操作完全相同，我们必须证明 (B1 • t) ≈r t, 对任意B1都成立（事实证明: 这个是无法证明的）
 说明: 一般情况下，在`解释器定义的语言(interpreter-defined language)`和语言的性质间，会有一些间隙，针对间隙我们必须做好保障
+出于各种目的, 语言的属性是和它计算的值是同样重要的, 比如: 如果 • 和 or 的表现是一致的, 那么编译器会安全的将 `(B1 • t)` 优化为 `t`, 类似的, 如果一个语言的语法规则确保了一个数字不会和非数字相加, 那么语言的实现就不需要检查加法表达式的参数, 来确保参数都是数字.
 
 #### 1.4 直接求值
 ≈ 求值规则 并不是与我们认为的求值完全相同，它允许我们证明表达式之间是否等价，但无法从任意的B推导出 t or f
