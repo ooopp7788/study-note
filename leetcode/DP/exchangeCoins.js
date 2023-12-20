@@ -22,4 +22,4 @@ function coinChange(coins, n) {
   return arr[n]
 }
 
-console.log(coinChange([2],3))
+console.log(coinChange([2, 3],30))

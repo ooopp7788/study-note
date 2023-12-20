@@ -16,7 +16,7 @@ Church 将 lambda演算 发展为一种学习数学运算的方式，与机械�
 * ISWIM 的基本语法和 λ-calculus 一致，自由变量和代换也是一样
 * 和 λ-calculus 不一样的是，它更像一门真实的程序语言
 * ISWIM 提供基本常量和初级操作的集合
-* 更更笨的不同时 ISWIM 使用 `call-by-value` 规约规则
+* 更根本的不同是 ISWIM 使用 `call-by-value` 规约规则
 
 #### 5.1 ISWIM Expressions
 ```BNF
@@ -26,7 +26,7 @@ M,N,L,K  =  X
          |  b
          |  (o^n M ... M)
 
-X   =  avariable: x,y,...           // 变量
+X   =  a variable: x,y,...          // 变量
 b   =  a basic constant             // 常量
 o^n =  an n-ary primitive operation // n元基本操作
 ```
@@ -37,7 +37,7 @@ b   =  { ⌈n⌉ | n ∈ Z }
 o^1 =  { add1,sub1,iszero }
 o^2 =  { +, -, *, }
 
-(if0 K M N) ≐ (((iszero K) (λX.M) (λX.N)) ⌈0⌉) where X ̸∈ FV(M) ∪ FV(N)
+(if0 K M N) ≐ (((iszero K) (λX.M) (λX.N)) ⌈0⌉) where X !∈ FV(M) ∪ FV(N)
 
 #### 5.2 ISWIM Reductions
 ISWIM 中的函数，仅接受完全求值后的参数，所以我们需要定义 values 集合
